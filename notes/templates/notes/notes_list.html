@@ -1,0 +1,46 @@
+{% extends "base/base.html" %}
+{%  load crispy_forms_tags %}
+{% load static %}
+{% load humanize %}
+
+{% block static %}
+    <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
+    <script src="{% static 'notes/js/masonry.js' %}"></script>
+
+    <link rel="stylesheet" href="{% static 'notes/css/notes.css' %}">
+{% endblock static %}
+
+{% block content %}
+    {% include "notes/modals/add_note_modal.html" %}
+    {% include "notes/modals/edit_note_modal.html" %}
+    {% include "notes/modals/delete_note_confirm_modal.html" %}
+
+    <div class="notes masonry my-3">
+        {% for note in notes %}
+            <div class="masonry-brick">
+                <div class="card border mb-3 note masonry-content" style="max-width: 25rem;" data-note-title="{{ note.title }}" data-note-body="{{ note.body }}" data-note-slug="{{ note.slug }}">
+                    <div class="card-header d-flex align-items-center">
+                        <span class="me-auto d-inline-block text-truncate">{{ note.title }}</span>
+                        <div class="note__actions">
+                            <a class="btn p-0" href="{% url 'note_delete' slug=note.slug %}" data-bs-toggle="modal" data-bs-target="#delete-note-confirm-modal">
+                                <span class="material-symbols-outlined text-danger p-1">delete</span>
+                            </a>
+                            <a class="btn p-0" href="{% url 'note_edit' slug=note.slug %}" data-bs-toggle="modal" data-bs-target="#edit-note-modal">
+                                <span class="material-symbols-outlined text-primary p-1">edit_note</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-text note__body">{{ note.as_html }}</div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex align-items-center justify-content-center">
+                            <span class="material-symbols-outlined text-muted fs-6" style="margin-right: 5px;">update</span>
+                            <span class="text-muted fs-6">{{ note.updated_at|naturaltime }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock content %}
